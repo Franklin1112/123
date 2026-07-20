@@ -18,14 +18,15 @@
         <div class="logo-mark">V</div>
         <div class="logo-text">
           Voyage Europa
-          <small>Экскурсии по Европе</small>
+          <small id="logo-sub">Экскурсии по Европе</small>
         </div>
       </div>
       <nav class="nav" id="nav"></nav>
       <div class="header-cta">
+        <div class="lang-switcher" id="lang-switch"></div>
         <button class="cart-btn" onclick="openCart()">
           <span>🛒</span>
-          Корзина
+          <span id="cart-label">Корзина</span>
           <span class="cart-count" id="cart-count">0</span>
         </button>
       </div>
@@ -42,32 +43,22 @@
             <div class="logo-mark">V</div>
             <div class="logo-text">Voyage Europa</div>
           </div>
-          <p>Авторские экскурсии по Европе с русскоязычными гидами. Более 500 маршрутов в 8 странах, круглосуточная поддержка и возврат за 24 часа до тура.</p>
+          <p id="footer-desc"></p>
         </div>
         <div>
-          <h5>Направления</h5>
+          <h5 id="footer-h-dir"></h5>
           <ul id="footer-countries"></ul>
         </div>
         <div>
-          <h5>Компания</h5>
-          <ul>
-            <li><a href="#/about">О нас</a></li>
-            <li><a href="#/contacts">Контакты</a></li>
-            <li><a href="#/reviews">Отзывы</a></li>
-            <li><a href="#/blog">Блог</a></li>
-          </ul>
+          <h5 id="footer-h-co"></h5>
+          <ul id="footer-links-co"></ul>
         </div>
         <div>
-          <h5>Поддержка</h5>
-          <ul>
-            <li><a href="#/faq">FAQ</a></li>
-            <li><a href="#/terms">Условия бронирования</a></li>
-            <li><a href="#/privacy">Политика конфиденциальности</a></li>
-            <li><a href="mailto:hello@voyage-europa.eu">hello@voyage-europa.eu</a></li>
-          </ul>
+          <h5 id="footer-h-sup"></h5>
+          <ul id="footer-links-sup"></ul>
         </div>
       </div>
-      <div class="footer-bottom">© 2026 Voyage Europa. Демо-шаблон, все цены и описания — из открытых источников.</div>
+      <div class="footer-bottom" id="footer-copy"></div>
     </div>
   </footer>
 
@@ -81,8 +72,16 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="exc-modal">
+    <div class="modal modal-lg">
+      <button class="modal-close modal-close-float" onclick="closeExc()">×</button>
+      <div class="modal-body modal-body-flush" id="exc-body"></div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
+  <script src="js/i18n.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
