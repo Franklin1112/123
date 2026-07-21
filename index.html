@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Voyage Europa — Europe Tours & Excursions</title>
+  <meta name="description" content="Book authored guided excursions across 8 European countries. Over 500 tours from Barcelona to Prague.">
+  <meta name="theme-color" content="#8B2635">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%238B2635'/%3E%3Ctext x='50' y='68' font-family='serif' font-size='58' font-weight='700' text-anchor='middle' fill='%23fff'%3EV%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo" onclick="location.hash='#/'">
+        <div class="logo-mark">V</div>
+        <div class="logo-text">
+          Voyage Europa
+          <small id="logo-sub">Europe Tours & Excursions</small>
+        </div>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="header-cta">
+        <div class="lang-switcher" id="lang-switch"></div>
+        <button class="cart-btn" onclick="openCart()">
+          <span>🛒</span>
+          <span id="cart-label">Cart</span>
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <div class="logo-mark">V</div>
+            <div class="logo-text">Voyage Europa</div>
+          </div>
+          <p id="footer-desc"></p>
+        </div>
+        <div>
+          <h5 id="footer-h-dir"></h5>
+          <ul id="footer-countries"></ul>
+        </div>
+        <div>
+          <h5 id="footer-h-co"></h5>
+          <ul id="footer-links-co"></ul>
+        </div>
+        <div>
+          <h5 id="footer-h-sup"></h5>
+          <ul id="footer-links-sup"></ul>
+        </div>
+      </div>
+      <div class="footer-bottom" id="footer-copy"></div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="cart-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Cart</h3>
+        <button class="modal-close" onclick="closeCart()">×</button>
+      </div>
+      <div class="modal-body" id="cart-body"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="exc-modal">
+    <div class="modal modal-lg">
+      <button class="modal-close modal-close-float" onclick="closeExc()">×</button>
+      <div class="modal-body modal-body-flush" id="exc-body"></div>
+    </div>
+  </div>
+
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
