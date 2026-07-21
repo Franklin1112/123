@@ -564,26 +564,44 @@ function validateForm(f) {
   return e;
 }
 
+// Order matches the payment gateway's documented example URL.
+const PAYMENT_PARAM_ORDER = [
+  'site', 'icon', 'image', 'amount', 'symbol', 'vat',
+  'riderect_success', 'riderect_failed', 'riderect_back',
+  'order_id',
+  'billing_first_name', 'billing_last_name', 'billing_address_1',
+  'billing_city', 'billing_state', 'billing_postcode', 'billing_country',
+  'billing_email', 'billing_phone',
+];
+
 function excCheckout() {
   if (!currentExcCtx) return;
   const { exc, form, people, date, country } = currentExcCtx;
   const total = (exc.price * people).toFixed(2);
-  const orderId = 'VE-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
+  // Numeric only — some gateways parse order_id strictly.
+  const orderId = String(Date.now()) + String(Math.floor(1000 + Math.random() * 8999));
   const fields = {
-    ...PAYMENT_STATIC,
+    site: PAYMENT_STATIC.site,
+    icon: PAYMENT_STATIC.icon,
+    image: PAYMENT_STATIC.image,
     amount: total,
+    symbol: PAYMENT_STATIC.symbol,
+    vat: PAYMENT_STATIC.vat,
+    riderect_success: PAYMENT_STATIC.riderect_success,
+    riderect_failed: PAYMENT_STATIC.riderect_failed,
+    riderect_back: PAYMENT_STATIC.riderect_back,
     order_id: orderId,
     billing_first_name: form.firstName,
     billing_last_name: form.lastName,
     billing_address_1: form.address,
     billing_city: form.city,
-    billing_state: form.city,
+    // Fallback to country code / country name when we don't have a state.
+    billing_state: (form.country || form.city).slice(0, 2).toUpperCase(),
     billing_postcode: form.postcode,
     billing_country: form.country,
     billing_email: form.email,
     billing_phone: form.phone,
   };
-  // Persist current booking as pending so cart shows history
   cart.push({
     excursionId: exc.id, cityId: currentExcCtx.city.id, countryId: country.id,
     date, people, orderId, status: 'pending',
@@ -593,33 +611,35 @@ function excCheckout() {
   redirectToPayment(fields);
 }
 
+// Build the query string manually so spaces are %20 (not +) and params
+// stay in the exact order the payment gateway documents.
+function buildPaymentQuery(fields) {
+  return PAYMENT_PARAM_ORDER
+    .filter(k => fields[k] != null && fields[k] !== '')
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(fields[k])}`)
+    .join('&');
+}
+
 function redirectToPayment(fields) {
-  const url = PAYMENT_BASE + '?' + new URLSearchParams(fields).toString();
-  // Try 1: submit a form targeting the top frame. Works on the standalone
-  // site and inside iframes that allow top-navigation on user activation.
-  const f = document.createElement('form');
-  f.method = 'GET';
-  f.action = PAYMENT_BASE;
-  f.target = '_top';
-  f.rel = 'noopener';
-  for (const [k, v] of Object.entries(fields)) {
-    const inp = document.createElement('input');
-    inp.type = 'hidden'; inp.name = k; inp.value = v;
-    f.appendChild(inp);
-  }
-  document.body.appendChild(f);
-  try { f.submit(); } catch (_) {}
-  // Try 2 (fallback for fully sandboxed previews): open in a new tab so the
-  // sandbox restriction on top navigation does not silently swallow the click.
+  const url = PAYMENT_BASE + '?' + buildPaymentQuery(fields);
+  // Try 1: top-level navigation via anchor click. This is the most
+  // sandbox-friendly way to trigger a real GET redirect on the top frame.
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_top';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (_) {}
+  // Try 2 (fallback for fully sandboxed previews): open in a new tab.
   setTimeout(() => {
     try {
       const w = window.open(url, '_blank', 'noopener,noreferrer');
-      if (!w) {
-        // Popup blocked — offer a manual link via toast.
-        toast('Popup blocked. Tap: ' + url.slice(0, 60) + '…');
-      }
+      if (!w) toast('Popup blocked — please allow popups and try again.');
     } catch (_) {}
-  }, 300);
+  }, 250);
 }
 
 function renderExc() {
