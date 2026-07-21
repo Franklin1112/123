@@ -622,24 +622,26 @@ function buildPaymentQuery(fields) {
 
 function redirectToPayment(fields) {
   const url = PAYMENT_BASE + '?' + buildPaymentQuery(fields);
-  // Try 1: top-level navigation via anchor click. This is the most
-  // sandbox-friendly way to trigger a real GET redirect on the top frame.
+  // Direct top-frame assignment — instant on the hosted site.
   try {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_top';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  } catch (_) {}
-  // Try 2 (fallback for fully sandboxed previews): open in a new tab.
-  setTimeout(() => {
-    try {
-      const w = window.open(url, '_blank', 'noopener,noreferrer');
-      if (!w) toast('Popup blocked — please allow popups and try again.');
-    } catch (_) {}
-  }, 250);
+    window.top.location.href = url;
+    return;
+  } catch (_) {
+    // Cross-origin/sandbox — assignment threw. Fall through to form submit.
+  }
+  // Form submit with target=_top — accepted by sandboxed preview iframes
+  // that carry allow-top-navigation-by-user-activation.
+  const f = document.createElement('form');
+  f.method = 'GET';
+  f.action = PAYMENT_BASE;
+  f.target = '_top';
+  for (const [k, v] of Object.entries(fields)) {
+    const inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = k; inp.value = v;
+    f.appendChild(inp);
+  }
+  document.body.appendChild(f);
+  f.submit();
 }
 
 function renderExc() {
