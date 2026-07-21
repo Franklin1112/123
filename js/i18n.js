@@ -583,10 +583,21 @@ const COMPANY = {
 
 // Payment gateway
 const PAYMENT_BASE = 'https://paymentpanelka0117.com/connect/form';
+
+// Logos passed to the gateway as `icon` and `image` params. When the site is
+// deployed (GitHub Pages, own domain, etc.) we send short URLs to the SVG
+// files in /assets — the gateway just fetches them. When the same page runs
+// inside a single-file preview (Artifact) there is no /assets directory, so
+// we inline the same SVGs as base64 data URLs.
+const _VE_DIR = new URL('.', window.location.href).href;
+const _VE_IS_INLINE = /claude\.ai$/.test(window.location.hostname);
+const _VE_ICON_B64 = 'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjOEIyNjM1Ii8+PHRleHQgeD0iNjQiIHk9IjkyIiBmb250LWZhbWlseT0iR2VvcmdpYSwgc2VyaWYiIGZvbnQtc2l6ZT0iODIiIGZvbnQtd2VpZ2h0PSI3MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPlY8L3RleHQ+PC9zdmc+';
+const _VE_LOGO_B64 = 'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDAgMTIwIj48cmVjdCB4PSIxNiIgeT0iMTgiIHdpZHRoPSI4NCIgaGVpZ2h0PSI4NCIgcng9IjE4IiBmaWxsPSIjOEIyNjM1Ii8+PHRleHQgeD0iNTgiIHk9IjgzIiBmb250LWZhbWlseT0iR2VvcmdpYSwgc2VyaWYiIGZvbnQtc2l6ZT0iNTYiIGZvbnQtd2VpZ2h0PSI3MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPlY8L3RleHQ+PHRleHQgeD0iMTIwIiB5PSI2NiIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsIHNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMkExRjFBIj5Wb3lhZ2UgRXVyb3BhPC90ZXh0Pjx0ZXh0IHg9IjEyMSIgeT0iOTIiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGZvbnQtd2VpZ2h0PSI2MDAiIGxldHRlci1zcGFjaW5nPSIzIiBmaWxsPSIjN0E2QTVEIj5FVVJPUEUgVE9VUlM8L3RleHQ+PC9zdmc+';
+
 const PAYMENT_STATIC = {
   site: 'paymentpanelka0117.com',
-  icon: 'https://s6.imgcdn.dev/8xixd.png',
-  image: 'https://s6.imgcdn.dev/8xQsM.png',
+  icon: _VE_IS_INLINE ? 'data:image/svg+xml;base64,' + _VE_ICON_B64 : _VE_DIR + 'assets/icon.svg',
+  image: _VE_IS_INLINE ? 'data:image/svg+xml;base64,' + _VE_LOGO_B64 : _VE_DIR + 'assets/logo.svg',
   symbol: 'USD',
   vat: '20',
   riderect_success: window.location.origin + window.location.pathname + '#/order/success',
