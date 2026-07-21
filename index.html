@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voyage Europa — Экскурсии по Европе</title>
-  <meta name="description" content="Бронирование авторских экскурсий в 8 странах Европы. Более 500 маршрутов от Барселоны до Праги.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Voyage Europa — Europe Tours & Excursions</title>
+  <meta name="description" content="Book authored guided excursions across 8 European countries. Over 500 tours from Barcelona to Prague.">
+  <meta name="theme-color" content="#8B2635">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +19,7 @@
         <div class="logo-mark">V</div>
         <div class="logo-text">
           Voyage Europa
-          <small id="logo-sub">Экскурсии по Европе</small>
+          <small id="logo-sub">Europe Tours & Excursions</small>
         </div>
       </div>
       <nav class="nav" id="nav"></nav>
@@ -26,7 +27,7 @@
         <div class="lang-switcher" id="lang-switch"></div>
         <button class="cart-btn" onclick="openCart()">
           <span>🛒</span>
-          <span id="cart-label">Корзина</span>
+          <span id="cart-label">Cart</span>
           <span class="cart-count" id="cart-count">0</span>
         </button>
       </div>
@@ -65,7 +66,7 @@
   <div class="modal-overlay" id="cart-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3>Ваша корзина</h3>
+        <h3>Cart</h3>
         <button class="modal-close" onclick="closeCart()">×</button>
       </div>
       <div class="modal-body" id="cart-body"></div>
@@ -78,6 +79,8 @@
       <div class="modal-body modal-body-flush" id="exc-body"></div>
     </div>
   </div>
+
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite"></div>
 
   <div class="toast" id="toast"></div>
 
