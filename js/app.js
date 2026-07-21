@@ -569,7 +569,7 @@ function excCheckout() {
   const { exc, form, people, date, country } = currentExcCtx;
   const total = (exc.price * people).toFixed(2);
   const orderId = 'VE-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
-  const params = new URLSearchParams({
+  const fields = {
     ...PAYMENT_STATIC,
     amount: total,
     order_id: orderId,
@@ -582,7 +582,7 @@ function excCheckout() {
     billing_country: form.country,
     billing_email: form.email,
     billing_phone: form.phone,
-  });
+  };
   // Persist current booking as pending so cart shows history
   cart.push({
     excursionId: exc.id, cityId: currentExcCtx.city.id, countryId: country.id,
@@ -590,7 +590,36 @@ function excCheckout() {
   });
   saveCart();
   closeExc();
-  window.location.href = PAYMENT_BASE + '?' + params.toString();
+  redirectToPayment(fields);
+}
+
+function redirectToPayment(fields) {
+  const url = PAYMENT_BASE + '?' + new URLSearchParams(fields).toString();
+  // Try 1: submit a form targeting the top frame. Works on the standalone
+  // site and inside iframes that allow top-navigation on user activation.
+  const f = document.createElement('form');
+  f.method = 'GET';
+  f.action = PAYMENT_BASE;
+  f.target = '_top';
+  f.rel = 'noopener';
+  for (const [k, v] of Object.entries(fields)) {
+    const inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = k; inp.value = v;
+    f.appendChild(inp);
+  }
+  document.body.appendChild(f);
+  try { f.submit(); } catch (_) {}
+  // Try 2 (fallback for fully sandboxed previews): open in a new tab so the
+  // sandbox restriction on top navigation does not silently swallow the click.
+  setTimeout(() => {
+    try {
+      const w = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!w) {
+        // Popup blocked — offer a manual link via toast.
+        toast('Popup blocked. Tap: ' + url.slice(0, 60) + '…');
+      }
+    } catch (_) {}
+  }, 300);
 }
 
 function renderExc() {
