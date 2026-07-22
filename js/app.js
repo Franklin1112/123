@@ -14,8 +14,20 @@ const toastEl = document.getElementById('toast');
 const cookieEl = document.getElementById('cookie-banner');
 
 // ---------- i18n ----------
-let currentLang = localStorage.getItem('ve_lang') || 'en';
-if (!I18N[currentLang]) currentLang = 'en';
+// Language is picked up from the visitor's browser / device settings.
+// Users switch language by changing their browser preferences — there is
+// no in-page language switcher.
+function detectBrowserLang() {
+  const prefs = (navigator.languages && navigator.languages.length)
+    ? navigator.languages
+    : [navigator.language || navigator.userLanguage || 'en'];
+  for (const p of prefs) {
+    const code = String(p).slice(0, 2).toLowerCase();
+    if (I18N[code]) return code;
+  }
+  return 'en';
+}
+let currentLang = detectBrowserLang();
 
 const t = (key, vars) => {
   const dict = I18N[currentLang] || I18N.en;
@@ -253,17 +265,6 @@ function buildHeader() {
   document.getElementById('logo-sub').textContent = t('logo_sub');
   document.getElementById('cart-label').textContent = t('cart');
   nav.innerHTML = DATA.countries.map(c => `<a href="#/country/${c.id}" data-country="${c.id}">${localCountry(c.id)}</a>`).join('');
-  const cur = LANG_LIST.find(l => l.code === currentLang);
-  document.getElementById('lang-switch').innerHTML = `
-    <button class="lang-btn" onclick="toggleLangMenu()">
-      <span>${cur.flag}</span><span class="lang-code">${currentLang.toUpperCase()}</span><span class="lang-caret">▾</span>
-    </button>
-    <div class="lang-menu" id="lang-menu">
-      ${LANG_LIST.map(l => `
-        <button class="lang-opt ${l.code === currentLang ? 'active' : ''}" onclick="setLang('${l.code}')">
-          <span>${l.flag}</span><span>${I18N[l.code].lang_name}</span>
-        </button>`).join('')}
-    </div>`;
 }
 
 function buildFooter() {
@@ -285,20 +286,6 @@ function buildFooter() {
   footerCountries.innerHTML = DATA.countries.map(c => `<li><a href="#/country/${c.id}">${c.flag} ${localCountry(c.id)}</a></li>`).join('');
 }
 
-function toggleLangMenu() { document.getElementById('lang-menu').classList.toggle('open'); }
-function setLang(code) {
-  if (!I18N[code]) return;
-  currentLang = code;
-  localStorage.setItem('ve_lang', code);
-  document.documentElement.lang = code;
-  buildHeader(); buildFooter(); render();
-  if (!localStorage.getItem(COOKIE_KEY)) ensureCookieBanner();
-}
-document.addEventListener('click', (e) => {
-  const menu = document.getElementById('lang-menu');
-  const btn = e.target.closest('.lang-btn');
-  if (menu && !btn && !e.target.closest('.lang-menu')) menu.classList.remove('open');
-});
 
 function render() {
   window.scrollTo({ top: 0, behavior: 'instant' });
@@ -976,6 +963,6 @@ function renderOrderStatus(status) {
 Object.assign(window, {
   removeFromCart, openCart, closeCart, openExc, closeExc,
   excSetDate, excSetPeople, excSetField, excToggleReviews, excGoStep, excCheckout,
-  setLang, toggleLangMenu, setCookieConsent, closeCookieAndGo,
+  setCookieConsent, closeCookieAndGo,
   submitContact, t, toast,
 });
